@@ -3,7 +3,7 @@ import moment from 'moment';
 import iMoment from 'moment-hijri';
 import { createSignal } from 'solid-js';
 import './App.scss';
-import { announcement } from './testData';
+// import { announcement } from './testData';
 // announcement.announcements = [];
 
 const prayerNames = {
@@ -16,9 +16,7 @@ const prayerNames = {
 };
 
 function App() {
-  const [data, setData] = createSignal<AnnouncementData>(
-    announcement as AnnouncementData
-  );
+  const [data, setData] = createSignal<AnnouncementData>();
   const [showPrayerAfter, setShowPrayerAfter] = createSignal(false);
 
   const [viewMode, setViewMode] = createSignal<'single-page' | 'slides'>(
@@ -289,27 +287,38 @@ function App() {
     });
   });
 
-  fetch('https://staging2.masjidnoormesa.com/api/announcements.php')
-    .then((res) => res.json())
-    .then((res: ReturnType<typeof data>) => {
-      // setData(res);
-      setData(announcement);
+  function getData() {
+    try {
+      fetch('https://staging2.masjidnoormesa.com/api/announcements.php')
+        .then((res) => res.json())
+        .then((res: ReturnType<typeof data>) => {
+          if (!res) return;
 
-      setTodayTable(
-        data().currentTime.map((time) => {
-          let seconds = 0;
+          setData(res);
 
-          seconds += +time.timehour * 60 * 60;
-          seconds += +time.timeminute * 60;
-          seconds += time.timeampm.toUpperCase() === 'PM' ? 12 * 60 * 60 : 0;
+          setTodayTable(
+            res.currentTime.map((time) => {
+              let seconds = 0;
 
-          return seconds;
-        })
-      );
+              seconds += +time.timehour * 60 * 60;
+              seconds += +time.timeminute * 60;
+              seconds +=
+                time.timeampm.toUpperCase() === 'PM' ? 12 * 60 * 60 : 0;
 
-      prayerCheckStart();
-    });
+              return seconds;
+            })
+          );
 
+          prayerCheckStart();
+        });
+    } catch (error) {}
+  }
+
+  setInterval(() => {
+    getData();
+  }, 5 * 60 * 1000);
+
+  getData();
   setViewModeSinglePage();
 
   // setTodayTable(
@@ -351,133 +360,137 @@ function App() {
       </div> */}
       <div class='background'></div>
 
-      <div
-        class={[
-          'layout',
-          viewMode() === 'slides' && 'layout-slides',
-          prayerUpComing().show && prayerUpComing().showBig
-            ? 'up-coming-prayer-big'
-            : 'up-coming-prayer',
-        ]
-          .filter(Boolean)
-          .filter(Boolean)
-          .join(' ')}
-      >
-        <div class='time-wrap wrap'>
-          <div class='box'>
-            <h1 class='time'>
-              {time().hour}
-              <span class='time-dots'>:</span>
-              {time().minute}
-              <span class='time-dots'>:</span>
-              <span class='time-sec'>{time().second}</span>
-              {' ' + time().meridiem}
-            </h1>
-            <h2 class='date'>{date()}</h2>
-            {islamicDate() && (
-              <h2 class='date-islamic'>
-                <div class='date-islamic-month'>{islamicDate()?.month}</div>
-                <div class='date-islamic-date'>{islamicDate()?.date},</div>
-                <div class='date-islamic-year'>{islamicDate()?.year}</div>
-              </h2>
-            )}
-          </div>
-        </div>
-
-        <div class='musjid-info-wrap wrap warp-light'>
-          <div class='box'>
-            <span class='box-heading'>Musjid Al-Noor</span>
-            <div class='box-content'>
-              <div>
-                <div>602-816-7428</div>
-                <div>imam@masjidnoormesa.com</div>
-                <div>55 N Matlock, Mesa, AZ 85203</div>
-              </div>
-              <div class='qr-code'>
-                <img src='/assets/qr-code.svg' />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {announcements().length && (
-          <div class='slide-info-wrap wrap warp-light'>
+      {data() && (
+        <div
+          class={[
+            'layout',
+            viewMode() === 'slides' && 'layout-slides',
+            prayerUpComing().show && prayerUpComing().showBig
+              ? 'up-coming-prayer-big'
+              : 'up-coming-prayer',
+          ]
+            .filter(Boolean)
+            .filter(Boolean)
+            .join(' ')}
+        >
+          <div class='time-wrap wrap'>
             <div class='box'>
-              <div class='box-heading'>
-                <div>{announcements()[slideNumber()]?.btn_label}</div>
-                <div class='buttons'>
-                  {announcements().map((_, i) => (
-                    <>
-                      <button class='btn' onclick={() => setSlideNumber(i)}>
-                        {i === slideNumber() ? 'O' : '-'}
-                      </button>
-                    </>
-                  ))}
+              <h1 class='time'>
+                {time().hour}
+                <span class='time-dots'>:</span>
+                {time().minute}
+                <span class='time-dots'>:</span>
+                <span class='time-sec'>{time().second}</span>
+                {' ' + time().meridiem}
+              </h1>
+              <h2 class='date'>{date()}</h2>
+              {islamicDate() && (
+                <h2 class='date-islamic'>
+                  <div class='date-islamic-month'>{islamicDate()?.month}</div>
+                  <div class='date-islamic-date'>{islamicDate()?.date},</div>
+                  <div class='date-islamic-year'>{islamicDate()?.year}</div>
+                </h2>
+              )}
+            </div>
+          </div>
+
+          <div class='musjid-info-wrap wrap warp-light'>
+            <div class='box'>
+              <span class='box-heading'>Musjid Al-Noor</span>
+              <div class='box-content'>
+                <div>
+                  <div>602-816-7428</div>
+                  <div>imam@masjidnoormesa.com</div>
+                  <div>55 N Matlock, Mesa, AZ 85203</div>
+                </div>
+                <div class='qr-code'>
+                  <img src='/assets/qr-code.svg' />
                 </div>
               </div>
-              <div
-                class='box-content'
-                innerHTML={
-                  data().announcements[slideNumber()]?.announcement || ''
-                }
-              ></div>
             </div>
           </div>
-        )}
 
-        <div class='up-coming-prayer-wrap wrap'>
-          <div class='box'>
-            <span class='box-heading'>Next Iqmah</span>
-            <div class='box-content'>
-              <span class='up-coming-prayer'>
-                {prayerUpComing().show &&
-                  (() => {
-                    const remainingSeconds = prayerUpComing().remainingTime;
-                    const hours = Math.floor(remainingSeconds / 3600);
-                    const minutes = Math.floor((remainingSeconds % 3600) / 60);
-                    const seconds = Math.floor(remainingSeconds % 60);
-
-                    return `${
-                      hours > 0 ? String(hours).padStart(2, '0') + ':' : ''
-                    }${String(minutes).padStart(2, '0')}:${String(
-                      seconds
-                    ).padStart(2, '0')}s`;
-                  })()}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div class='prayer-after-warp wrap'>
-          <div class='box'>
-            <span class='box-heading'>Prayer in Progress</span>
-            <div class='box-content'>Please join the congregation.</div>
-          </div>
-        </div>
-
-        <div class='timetable-wrap wrap'>
-          <div class='box'>
-            <span class='box-heading'>Prayer Timetable</span>
-            {data()?.currentTime?.map((time) => (
-              <div class='table-row'>
-                <div class='name'>{time.prayername}</div>
-                <div class='begins'>
-                  {
-                    ((data().startTime as any)[
-                      String.fromCharCode(97 + time.timeid)
-                    ] || {}) as any
-                  }
-                </div>
-                <div class='starts'>
-                  <div class='starts-time'>
-                    {time.timehour}:{time.timeminute} {time.timeampm}
+          {announcements().length && (
+            <div class='slide-info-wrap wrap warp-light'>
+              <div class='box'>
+                <div class='box-heading'>
+                  <div>{announcements()[slideNumber()]?.btn_label}</div>
+                  <div class='buttons'>
+                    {announcements().map((_, i) => (
+                      <>
+                        <button class='btn' onclick={() => setSlideNumber(i)}>
+                          {i === slideNumber() ? 'O' : '-'}
+                        </button>
+                      </>
+                    ))}
                   </div>
                 </div>
+                <div
+                  class='box-content'
+                  innerHTML={
+                    data()!.announcements[slideNumber()]?.announcement || ''
+                  }
+                ></div>
               </div>
-            ))}
+            </div>
+          )}
+
+          <div class='up-coming-prayer-wrap wrap'>
+            <div class='box'>
+              <span class='box-heading'>Next Iqmah</span>
+              <div class='box-content'>
+                <span class='up-coming-prayer'>
+                  {prayerUpComing().show &&
+                    (() => {
+                      const remainingSeconds = prayerUpComing().remainingTime;
+                      const hours = Math.floor(remainingSeconds / 3600);
+                      const minutes = Math.floor(
+                        (remainingSeconds % 3600) / 60
+                      );
+                      const seconds = Math.floor(remainingSeconds % 60);
+
+                      return `${
+                        hours > 0 ? String(hours).padStart(2, '0') + ':' : ''
+                      }${String(minutes).padStart(2, '0')}:${String(
+                        seconds
+                      ).padStart(2, '0')}s`;
+                    })()}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class='prayer-after-warp wrap'>
+            <div class='box'>
+              <span class='box-heading'>Prayer in Progress</span>
+              <div class='box-content'>Please join the congregation.</div>
+            </div>
+          </div>
+
+          <div class='timetable-wrap wrap'>
+            <div class='box'>
+              <span class='box-heading'>Prayer Timetable</span>
+              {data()?.currentTime?.map((time) => (
+                <div class='table-row'>
+                  <div class='name'>{time.prayername}</div>
+                  <div class='begins'>
+                    {
+                      ((data()!.startTime as any)[
+                        String.fromCharCode(97 + time.timeid)
+                      ] || {}) as any
+                    }
+                  </div>
+                  <div class='starts'>
+                    <div class='starts-time'>
+                      {time.timehour}:{time.timeminute} {time.timeampm}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 }
