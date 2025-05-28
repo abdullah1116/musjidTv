@@ -65,7 +65,7 @@ html {
   grid-template-rows: min-content min-content 1fr;
 
   grid-template-areas:
-    'time time up-coming'
+    'time time timetable'
     'time time timetable'
     'musjid-info-wrap slide-info-wrap timetable'
     'musjid-info-wrap slide-info-wrap timetable'
@@ -74,31 +74,51 @@ html {
   /* grid-gap: 1rem; */
   /* margin: 1rem; */
 
-  &.prayer-up-coming {
-    //   // grid-template-columns: 1fr;
-    //   // grid-template-rows: 1fr;
-    //   grid-template-areas:
-    //     'time time timetable'
-    //     'time time timetable'
-    //     '. up-coming timetable'
-    //     '. . timetable';
+  &.up-coming-prayer {
+    grid-template-areas:
+      'time time up-coming-prayer'
+      'time time timetable'
+      'musjid-info-wrap slide-info-wrap timetable'
+      'musjid-info-wrap slide-info-wrap timetable'
+      'musjid-info-wrap slide-info-wrap timetable';
 
-    //   .musjid-info-wrap {
-    //     display: none;
-    //   }
+    .up-coming-prayer-wrap {
+      display: unset;
+    }
+  }
 
-    //   .slide-info-wrap {
-    //     display: none;
-    //   }
+  &.up-coming-prayer-big {
+    grid-template-areas:
+      'time time time'
+      'time time time'
+      'up-coming-prayer up-coming-prayer up-coming-prayer'
+      'up-coming-prayer up-coming-prayer up-coming-prayer'
+      'up-coming-prayer up-coming-prayer up-coming-prayer';
 
-    //   // .wrap {
-    //   //   display: none;
-    //   // }
-    //   // .wrap.up-coming-wrap {
-    //   //   display: unset;
-    //   // }
-    .wrap:not(.up-coming-wrap) {
-      // filter: saturate(0.2) opacity(0.9);
+    .up-coming-prayer-wrap {
+      display: unset;
+
+      zoom: 1.3;
+      min-width: 41rem;
+      justify-self: center;
+      padding: 3rem;
+    }
+
+    .wrap:not(.up-coming-prayer-wrap, .time-wrap) {
+      display: none;
+    }
+  }
+
+  &.prayer-after {
+    grid-template-areas:
+      'time time prayer-after'
+      'time time timetable'
+      'musjid-info-wrap slide-info-wrap timetable'
+      'musjid-info-wrap slide-info-wrap timetable'
+      'musjid-info-wrap slide-info-wrap timetable';
+
+    .prayer-after-warp {
+      display: unset;
     }
   }
 
@@ -137,6 +157,7 @@ html {
       color: #341e00;
     }
   }
+
   // &:nth-last-child(0) {
   // padding-bottom: 1.2rem;
   // }
@@ -171,6 +192,7 @@ html {
         min-width: 1.2em;
         max-width: 1.2em;
       }
+
       .time-dots {
         margin: 0 0.05em;
         // color: #777777;
@@ -264,8 +286,9 @@ html {
   }
 }
 
-.up-coming-wrap {
-  grid-area: up-coming;
+.up-coming-prayer-wrap {
+  grid-area: up-coming-prayer;
+  display: none;
 
   height: 100%;
 
@@ -273,7 +296,30 @@ html {
     margin-top: -1rem;
     text-align: end;
 
-    .up-coming {
+    .up-coming-prayer {
+      width: 100%;
+
+      font-family: 'Gilroy';
+      margin-right: 3rem;
+
+      font-weight: 800;
+      font-size: 4rem;
+      text-align: end;
+    }
+  }
+}
+
+.prayer-after-warp {
+  grid-area: prayer-after;
+  display: none;
+
+  height: 100%;
+
+  .box-content {
+    margin-top: -1rem;
+    text-align: end;
+
+    .up-coming-prayer {
       width: 100%;
 
       font-family: 'Gilroy';
@@ -340,6 +386,8 @@ html {
 .layout-slides {
   .slide-info-wrap {
     .box {
+      zoom: 1.5;
+
       background-image: none !important;
       box-shadow: none;
       border: none;

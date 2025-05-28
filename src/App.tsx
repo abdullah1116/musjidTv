@@ -6,10 +6,20 @@ import './App.scss';
 import { announcement } from './testData';
 // announcement.announcements = [];
 
+const prayerNames = {
+  0: 'Fajr',
+  1: 'Dhuhr',
+  2: 'Asr',
+  3: 'Maghrib',
+  4: 'Isha',
+  5: 'Jummah',
+};
+
 function App() {
   const [data, setData] = createSignal<AnnouncementData>(
     announcement as AnnouncementData
   );
+  const [showPrayerAfter, setShowPrayerAfter] = createSignal(false);
 
   const [viewMode, setViewMode] = createSignal<'single-page' | 'slides'>(
     'single-page'
@@ -17,7 +27,11 @@ function App() {
 
   const [, setPosition] = createSignal(0);
 
-  const [prayerUpComing, setPrayerUpComing] = createSignal(!false);
+  const [prayerUpComing, setPrayerUpComing] = createSignal({
+    show: false,
+    showBig: false,
+    remainingTime: 0,
+  });
 
   const [time, setTime] = createSignal({
     hour: '',
@@ -35,18 +49,17 @@ function App() {
   }>();
   const [todayTable, setTodayTable] = createSignal<number[]>([]);
 
-  setTodayTable(
-    data().currentTime.map((time) => {
-      let seconds = 0;
+  // setTodayTable(
+  //   data().currentTime.map((time) => {
+  //     let seconds = 0;
 
-      seconds += +time.timehour * 60 * 60;
-      seconds += +time.timeminute * 60;
-      seconds += time.timeampm.toUpperCase() === 'PM' ? 12 * 60 * 60 : 0;
+  //     seconds += +time.timehour * 60 * 60;
+  //     seconds += +time.timeminute * 60;
+  //     seconds += time.timeampm.toUpperCase() === 'PM' ? 12 * 60 * 60 : 0;
 
-      return seconds;
-    })
-  );
-  console.log(todayTable());
+  //     return seconds;
+  //   })
+  // );
 
   // setInterval(() => {
   //   const date = new Date();
@@ -65,11 +78,12 @@ function App() {
   function announcements(withBlank = false) {
     const announcements = Array.from(data()?.announcements ?? []);
 
-    if (viewMode() === 'slides' || withBlank) {
+    if (!prayerUpComing().show && (viewMode() === 'slides' || withBlank)) {
       announcements.push(null as any);
     }
     return announcements;
   }
+
   //
   // Auto Slider
 
@@ -92,6 +106,90 @@ function App() {
 
       return undefined;
     });
+  }
+
+  const [, setPrayerCheckInterval] = createSignal<undefined | number>(
+    undefined
+  );
+
+  function prayerCheckStart() {
+    setPrayerCheckInterval(
+      setInterval(() => {
+        const now = getTimeOnly() / 1000;
+
+        let upcoming = false;
+
+        const availablePryers =
+          new Date().getDay() === 5 ? [0, 2, 3, 4, 5] : [0, 1, 2, 3, 4];
+
+        for (const prayerId of availablePryers) {
+          const prayerTimeInSeconds = todayTable()[prayerId];
+
+          if (
+            prayerTimeInSeconds - now < 15 * 60 &&
+            prayerTimeInSeconds - now >= -(5 * 60)
+          ) {
+            // console.log(
+            //   '🚀 ~ setInterval ~ prayerTimeInSeconds:',
+            //   prayerTimeInSeconds,
+            //   todayTable()
+            // );
+            upcoming = true;
+            const remainingTime = Math.max(0, prayerTimeInSeconds - now + 1);
+            setPrayerUpComing({
+              show: upcoming,
+              remainingTime: remainingTime,
+              showBig: remainingTime < 60 && remainingTime > -15,
+            });
+            break;
+          }
+        }
+
+        // if (!upcoming) {
+        //   for (const prayerTimeInSeconds of todayTable()) {
+        //     if (
+        //       prayerTimeInSeconds - now < 3 * 60 &&
+        //       prayerTimeInSeconds - now >= -(20 * 60)
+        //     ) {
+        //       console.log(
+        //         '🚀 ~ setInterval ~ prayerTimeInSeconds - now:',
+        //         prayerTimeInSeconds - now
+        //       );
+        //       upcoming = true;
+        //       setPrayerUpComing({
+        //         show: upcoming,
+        //         remainingTime: prayerTimeInSeconds - now,
+        //       });
+
+        //       // // Determine whether to show upcoming or existing prayer info
+        //       // if (prayerTimeInSeconds - now <= 1 * 60) {
+        //       //   // If within 1 minute of prayer start, show existing prayer info
+        //       //   setShowPrayerAfter(false);
+        //       // } else if (prayerTimeInSeconds - now <= 20 * 60) {
+        //       //   // If within 20 minutes before prayer start, show upcoming prayer info
+        //       //   setShowPrayerAfter(true);
+        //       // }
+
+        //       break;
+        //     }
+        // }
+        // }
+        // // Check if we are within 1 minute *after* the prayer start time
+        // if (
+        //   now > prayerTimeInSeconds &&
+        //   now - prayerTimeInSeconds <= 1 * 60
+        // ) {
+        //   setShowPrayerAfter(false); // Show existing prayer info
+        //   upcoming = true; // Keep the prayerUpComing state active for timing
+        // }
+
+        if (upcoming) {
+          setViewModeSinglePage();
+        } else {
+          setPrayerUpComing({ show: false, showBig: false, remainingTime: 0 });
+        }
+      }, 1000)
+    );
   }
 
   //
@@ -138,16 +236,6 @@ function App() {
     });
   }
 
-  function getTimeOnly() {
-    const sod = new Date();
-    sod.setHours(0);
-    sod.setMinutes(0);
-    sod.setSeconds(0);
-    sod.setMilliseconds(0);
-
-    return new Date().getTime() - sod.getTime();
-  }
-
   //
   // View Mode Setter
 
@@ -159,6 +247,8 @@ function App() {
   }
 
   function setViewModeSlides() {
+    if (prayerUpComing().show) return;
+
     SliderStop();
     timeUpdaterStop();
     setViewMode('slides');
@@ -167,14 +257,17 @@ function App() {
   (window as any).setPrayerUpComing = setPrayerUpComing;
   (window as any).setViewModeSlides = setViewModeSlides;
   //
+
   // Init
 
   document.addEventListener('keydown', (event) => {
     const positions: (() => void)[] = [];
 
-    positions.push(() => {
-      setViewModeSinglePage();
-    });
+    if (!prayerUpComing().show) {
+      positions.push(() => {
+        setViewModeSinglePage();
+      });
+    }
 
     announcements(true).forEach((_, i) => {
       positions.push(() => {
@@ -199,7 +292,8 @@ function App() {
   fetch('https://staging2.masjidnoormesa.com/api/announcements.php')
     .then((res) => res.json())
     .then((res: ReturnType<typeof data>) => {
-      setData(res);
+      // setData(res);
+      setData(announcement);
 
       setTodayTable(
         data().currentTime.map((time) => {
@@ -213,32 +307,59 @@ function App() {
         })
       );
 
-      console.log(todayTable);
+      prayerCheckStart();
     });
 
   setViewModeSinglePage();
 
-  setTodayTable(
-    data().currentTime.map((time) => {
-      let seconds = 0;
+  // setTodayTable(
+  //   data().currentTime.map((time) => {
+  //     let seconds = 0;
 
-      seconds += +time.timehour * 60 * 60;
-      seconds += +time.timeminute * 60;
-      seconds += time.timeampm.toUpperCase() === 'PM' ? 12 * 60 * 60 : 0;
+  //     seconds += +time.timehour * 60 * 60;
+  //     seconds += +time.timeminute * 60;
+  //     seconds += time.timeampm.toUpperCase() === 'PM' ? 12 * 60 * 60 : 0;
 
-      return seconds;
-    })
-  );
+  //     return seconds;
+  //   })
+  // );
+
+  function getTimeOnly() {
+    const sod = new Date();
+    sod.setHours(0);
+    sod.setMinutes(0);
+    sod.setSeconds(0);
+    sod.setMilliseconds(0);
+
+    return new Date().getTime() - sod.getTime();
+  }
 
   return (
     <>
+      {/* <div style={{ position: 'absolute' }}>
+        <pre style={'color:black'}>
+          {JSON.stringify(
+            {
+              viewMode: viewMode(),
+              showPrayerAfter: showPrayerAfter(),
+              prayerUpComing: prayerUpComing(),
+            },
+            undefined,
+            5
+          )}
+        </pre>
+      </div> */}
       <div class='background'></div>
+
       <div
         class={[
           'layout',
           viewMode() === 'slides' && 'layout-slides',
-          prayerUpComing() && 'prayer-up-coming',
+          prayerUpComing().show && prayerUpComing().showBig
+            ? 'up-coming-prayer-big'
+            : 'up-coming-prayer',
         ]
+          .filter(Boolean)
           .filter(Boolean)
           .join(' ')}
       >
@@ -304,14 +425,36 @@ function App() {
           </div>
         )}
 
-        <div class='up-coming-wrap wrap'>
+        <div class='up-coming-prayer-wrap wrap'>
           <div class='box'>
             <span class='box-heading'>Next Iqmah</span>
-            <div class='box-content '>
-              <span class='up-coming'>5:30s</span>
+            <div class='box-content'>
+              <span class='up-coming-prayer'>
+                {prayerUpComing().show &&
+                  (() => {
+                    const remainingSeconds = prayerUpComing().remainingTime;
+                    const hours = Math.floor(remainingSeconds / 3600);
+                    const minutes = Math.floor((remainingSeconds % 3600) / 60);
+                    const seconds = Math.floor(remainingSeconds % 60);
+
+                    return `${
+                      hours > 0 ? String(hours).padStart(2, '0') + ':' : ''
+                    }${String(minutes).padStart(2, '0')}:${String(
+                      seconds
+                    ).padStart(2, '0')}s`;
+                  })()}
+              </span>
             </div>
           </div>
         </div>
+
+        <div class='prayer-after-warp wrap'>
+          <div class='box'>
+            <span class='box-heading'>Prayer in Progress</span>
+            <div class='box-content'>Please join the congregation.</div>
+          </div>
+        </div>
+
         <div class='timetable-wrap wrap'>
           <div class='box'>
             <span class='box-heading'>Prayer Timetable</span>
