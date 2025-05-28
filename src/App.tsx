@@ -133,10 +133,10 @@ function App() {
             //   todayTable()
             // );
             upcoming = true;
-            const remainingTime = Math.max(0, prayerTimeInSeconds - now + 1);
+            const remainingTime = prayerTimeInSeconds - now + 1;
             setPrayerUpComing({
               show: upcoming,
-              remainingTime: remainingTime,
+              remainingTime: Math.max(0, remainingTime),
               showBig: remainingTime < 60 && remainingTime > -15,
             });
             break;
@@ -288,38 +288,52 @@ function App() {
   });
 
   function getData() {
-    try {
-      fetch('https://staging2.masjidnoormesa.com/api/announcements.php')
-        .then((res) => res.json())
-        .then((res: ReturnType<typeof data>) => {
-          if (!res) return;
+    return new Promise(async (resolve, reject) => {
+      try {
+        await fetch('https://staging2.masjidnoormesa.com/api/announcements.php')
+          .then((res) => res.json())
+          .then((res: ReturnType<typeof data>) => {
+            if (!res) return;
 
-          setData(res);
+            setData(res);
 
-          setTodayTable(
-            res.currentTime.map((time) => {
-              let seconds = 0;
+            setTodayTable(
+              res.currentTime.map((time) => {
+                let seconds = 0;
 
-              seconds += +time.timehour * 60 * 60;
-              seconds += +time.timeminute * 60;
-              seconds +=
-                time.timeampm.toUpperCase() === 'PM' ? 12 * 60 * 60 : 0;
+                seconds += +time.timehour * 60 * 60;
+                seconds += +time.timeminute * 60;
+                seconds +=
+                  time.timeampm.toUpperCase() === 'PM' ? 12 * 60 * 60 : 0;
 
-              return seconds;
-            })
-          );
+                return seconds;
+              })
+            );
 
-          prayerCheckStart();
-        });
-    } catch (error) {}
+            resolve(true);
+          });
+      } catch (error) {
+        reject();
+      }
+    });
   }
 
-  setInterval(() => {
-    getData();
-  }, 5 * 60 * 1000);
+  (async () => {
+    await getData()
+      .catch(() => getData())
+      .catch(() => getData());
 
-  getData();
-  setViewModeSinglePage();
+    if (!data()) {
+      location.reload();
+    }
+
+    prayerCheckStart();
+    setViewModeSinglePage();
+
+    setInterval(() => {
+      getData();
+    }, 5 * 60 * 1000);
+  })();
 
   // setTodayTable(
   //   data().currentTime.map((time) => {
@@ -365,9 +379,11 @@ function App() {
           class={[
             'layout',
             viewMode() === 'slides' && 'layout-slides',
-            prayerUpComing().show && prayerUpComing().showBig
-              ? 'up-coming-prayer-big'
-              : 'up-coming-prayer',
+            prayerUpComing().show
+              ? prayerUpComing().showBig
+                ? 'up-coming-prayer-big'
+                : 'up-coming-prayer'
+              : '',
           ]
             .filter(Boolean)
             .filter(Boolean)
