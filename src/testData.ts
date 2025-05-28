@@ -72,6 +72,32 @@ export const announcement = {
       btn_url: 'https://masjidnoormesa.com/form.pdf',
       position: 0,
     },
+    {
+      id: 36,
+      announcement:
+        'Al-Walid reported: Abdullah ibn Amr, may Allah be pleased with him, said, “Whoever passes through foreign lands and participates in their new years and their festivals, imitating them and dying' +
+        'Al-Walid reported: Abdullah ibn Amr, may Allah be pleased with him, said, “Whoever passes through foreign lands and participates in their new years and their festivals, imitating them and dying' +
+        'Al-Walid reported: Abdullah ibn Amr, may Allah be pleased with him, said, “Whoever passes through foreign lands and participates in their new years and their festivals, imitating them and dying' +
+        'Al-Walid reported: Abdullah ibn Amr, may Allah be pleased with him, said, “Whoever passes through foreign lands and participates in their new years and their festivals, imitating them and dying' +
+        'Al-Walid reported: Abdullah ibn Amr, may Allah be pleased with him, said, “Whoever passes through foreign lands and participates in their new years and their festivals, imitating them and dying' +
+        'Al-Walid reported: Abdullah ibn Amr, may Allah be pleased with him, said, “Whoever passes through foreign lands and participates in their new years and their festivals, imitating them and dying' +
+        'Al-Walid reported: Abdullah ibn Amr, may Allah be pleased with him, said, “Whoever passes through foreign lands and participates in their new years and their festivals, imitating them and dying' +
+        'Al-Walid reported: Abdullah ibn Amr, may Allah be pleased with him, said, “Whoever passes through foreign lands and participates in their new years and their festivals, imitating them and dying' +
+        'Al-Walid reported: Abdullah ibn Amr, may Allah be pleased with him, said, “Whoever passes through foreign lands and participates in their new years and their festivals, imitating them and dying' +
+        'Al-Walid reported: Abdullah ibn Amr, may Allah be pleased with him, said, “Whoever passes through foreign lands and participates in their new years and their festivals, imitating them and dying' +
+        'Al-Walid reported: Abdullah ibn Amr, may Allah be pleased with him, said, “Whoever passes through foreign lands and participates in their new years and their festivals, imitating them and dying' +
+        'Al-Walid reported: Abdullah ibn Amr, may Allah be pleased with him, said, “Whoever passes through foreign lands and participates in their new years and their festivals, imitating them and dying' +
+        'Al-Walid reported: Abdullah ibn Amr, may Allah be pleased with him, said, “Whoever passes through foreign lands and participates in their new years and their festivals, imitating them and dying' +
+        'Al-Walid reported: Abdullah ibn Amr, may Allah be pleased with him, said, “Whoever passes through foreign lands and participates in their new years and their festivals, imitating them and dying' +
+        'Al-Walid reported: Abdullah ibn Amr, may Allah be pleased with him, said, “Whoever passes through foreign lands and participates in their new years and their festivals, imitating them and dying' +
+        'Al-Walid reported: Abdullah ibn Amr, may Allah be pleased with him, said, “Whoever passes through foreign lands and participates in their new years and their festivals, imitating them and dying' +
+        'Al-Walid reported: Abdullah ibn Amr, may Allah be pleased with him, said, “Whoever passes through foreign lands and participates in their new years and their festivals, imitating them and dying' +
+        'Al-Walid reported: Abdullah ibn Amr, may Allah be pleased with him, said, “Whoever passes through foreign lands and participates in their new years and their festivals, imitating them and dying' +
+        'Al-Walid reported: Abdullah ibn Amr, may Allah be pleased with him, said, “Whoever passes through foreign lands and participates in their new years and their festivals, imitating them and dying',
+      btn_label: 'Daily Hades',
+      btn_url: '',
+      position: 1,
+    },
   ],
   recordings: [
     {

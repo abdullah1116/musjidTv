@@ -3,7 +3,13 @@
 }
 
 html {
-  // zoom: 2.1;
+  zoom: 2.1;
+}
+
+.btn {
+  background: none;
+  border: none;
+  font-weight: 600;
 }
 
 .background {
@@ -34,6 +40,11 @@ html {
     font-size: 1.7rem;
     font-family: Gilroy;
     font-weight: 700;
+
+    .buttons {
+      display: flex;
+      align-items: center;
+    }
   }
 
   .box-content {
@@ -47,11 +58,12 @@ html {
   padding: 1.5rem;
 
   display: grid;
-  gap: 1.75rem;
+  gap: 1.5rem;
   position: absolute;
 
   grid-template-columns: minmax(25rem, min-content) 1fr minmax(auto, 40rem);
   grid-template-rows: min-content min-content 1fr;
+
   grid-template-areas:
     'time time up-coming'
     'time time timetable'
@@ -61,6 +73,44 @@ html {
 
   /* grid-gap: 1rem; */
   /* margin: 1rem; */
+
+  &.prayer-up-coming {
+    //   // grid-template-columns: 1fr;
+    //   // grid-template-rows: 1fr;
+    //   grid-template-areas:
+    //     'time time timetable'
+    //     'time time timetable'
+    //     '. up-coming timetable'
+    //     '. . timetable';
+
+    //   .musjid-info-wrap {
+    //     display: none;
+    //   }
+
+    //   .slide-info-wrap {
+    //     display: none;
+    //   }
+
+    //   // .wrap {
+    //   //   display: none;
+    //   // }
+    //   // .wrap.up-coming-wrap {
+    //   //   display: unset;
+    //   // }
+    .wrap:not(.up-coming-wrap) {
+      // filter: saturate(0.2) opacity(0.9);
+    }
+  }
+
+  &.layout-slides {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas: 'slide-info-wrap';
+
+    .wrap:not(.slide-info-wrap) {
+      display: none;
+    }
+  }
 }
 
 .wrap {
@@ -70,6 +120,7 @@ html {
   // padding-bottom: 0rem;
 
   .box {
+    overflow: hidden;
     background-image: linear-gradient(-45deg, #133951, #1a4d6e);
     // margin: 1.2rem 1.2rem 1.2px 1.2rem;
     // margin-bottom: 0rem;
@@ -96,29 +147,54 @@ html {
   justify-content: center;
   justify-items: center;
 
-  .time {
-    margin: 0px;
-    text-shadow: 0px 0px 1.5em #000b;
-    font-size: 5rem;
-    color: #373737;
-  }
+  .box {
+    background: none;
+    background-color: none;
+    box-shadow: none;
+    overflow: unset;
 
-  .date {
-    margin: 0px;
-    text-shadow: 0px 0px 1.5em #000b;
-    color: #373737;
-    font-size: 3rem;
-    font-weight: 500;
-  }
+    text-align: center;
+    // justify-content: center;
+    // justify-items: center;
 
-  .date-islamic {
-    margin: 0px;
-    display: flex;
-    gap: 1rem;
-    text-shadow: 0px 0px 1.5em #000b;
-    color: #373737;
-    font-size: 3rem;
-    font-weight: 500;
+    min-width: 40rem;
+
+    .time {
+      margin: 0px;
+      text-shadow: 0px 0px 1.5em #000b;
+      font-size: 5rem;
+      color: #373737;
+
+      .time-sec {
+        display: inline-block;
+        text-align: start;
+        min-width: 1.2em;
+        max-width: 1.2em;
+      }
+      .time-dots {
+        margin: 0 0.05em;
+        // color: #777777;
+      }
+    }
+
+    .date {
+      margin: 0px;
+      ext-shadow: 0px 0px 1.5em #000b;
+      color: #373737;
+      font-size: 3rem;
+      font-weight: 500;
+    }
+
+    .date-islamic {
+      margin: 0px;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      text-shadow: 0px 0px 1.5em #000b;
+      color: #373737;
+      font-size: 3rem;
+      font-weight: 500;
+    }
   }
 }
 
@@ -191,7 +267,7 @@ html {
 .up-coming-wrap {
   grid-area: up-coming;
 
-  height: min-content;
+  height: 100%;
 
   .box-content {
     margin-top: -1rem;
@@ -261,6 +337,14 @@ html {
   }
 }
 
-.up-coming-wrap,
-.timetable-wrap {
+.layout-slides {
+  .slide-info-wrap {
+    .box {
+      background-image: none !important;
+      box-shadow: none;
+      border: none;
+      border-radius: 0;
+      padding: 0;
+    }
+  }
 }
