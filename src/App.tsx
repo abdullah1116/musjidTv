@@ -198,9 +198,9 @@ function App() {
   );
 
   function timeUpdaterStart() {
-    timeUpdaterStop();
+    setTimeUpdaterInterval((v) => {
+      if (v) return v;
 
-    setTimeUpdaterInterval(
       setInterval(() => {
         const now = moment();
         setTime({
@@ -220,8 +220,8 @@ function App() {
           date: m.iDate(),
           year: m.iYear(),
         });
-      }, 1000)
-    );
+      }, 1000);
+    });
   }
 
   function timeUpdaterStop() {
@@ -238,9 +238,9 @@ function App() {
   // View Mode Setter
 
   function setViewModeSinglePage() {
+    setViewMode('single-page');
     timeUpdaterStart();
     SliderStart();
-    setViewMode('single-page');
     setSlideNumber((s) => s % announcements().length);
   }
 
