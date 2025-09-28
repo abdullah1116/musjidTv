@@ -3,21 +3,9 @@ import moment from 'moment';
 import iMoment from 'moment-hijri';
 import { createSignal } from 'solid-js';
 import './App.scss';
-// import { announcement } from './testData';
-// announcement.announcements = [];
-
-const prayerNames = {
-  0: 'Fajr',
-  1: 'Dhuhr',
-  2: 'Asr',
-  3: 'Maghrib',
-  4: 'Isha',
-  5: 'Jummah',
-};
 
 function App() {
   const [data, setData] = createSignal<AnnouncementData>();
-  const [showPrayerAfter, setShowPrayerAfter] = createSignal(false);
 
   const [viewMode, setViewMode] = createSignal<'single-page' | 'slides'>(
     'single-page'
@@ -46,32 +34,6 @@ function App() {
     year: string;
   }>();
   const [todayTable, setTodayTable] = createSignal<number[]>([]);
-
-  // setTodayTable(
-  //   data().currentTime.map((time) => {
-  //     let seconds = 0;
-
-  //     seconds += +time.timehour * 60 * 60;
-  //     seconds += +time.timeminute * 60;
-  //     seconds += time.timeampm.toUpperCase() === 'PM' ? 12 * 60 * 60 : 0;
-
-  //     return seconds;
-  //   })
-  // );
-
-  // setInterval(() => {
-  //   const date = new Date();
-  //   const formattedTime = date.toLocaleTimeString();
-  //   setTime(formattedTime);
-  //   setDate(moment().format('MMM DD'));
-
-  //   const m = iMoment();
-  //   setIslamicDate({
-  //     month: m._locale._iMonths[m.iMonth()],
-  //     date: m.iDate(),
-  //     year: m.iYear(),
-  //   });
-  // }, 1000);
 
   function announcements(withBlank = false) {
     const announcements = Array.from(data()?.announcements ?? []);
@@ -127,11 +89,6 @@ function App() {
             prayerTimeInSeconds - now < 15 * 60 &&
             prayerTimeInSeconds - now >= -(5 * 60)
           ) {
-            // console.log(
-            //   '🚀 ~ setInterval ~ prayerTimeInSeconds:',
-            //   prayerTimeInSeconds,
-            //   todayTable()
-            // );
             upcoming = true;
             const remainingTime = prayerTimeInSeconds - now + 1;
             setPrayerUpComing({
@@ -142,44 +99,6 @@ function App() {
             break;
           }
         }
-
-        // if (!upcoming) {
-        //   for (const prayerTimeInSeconds of todayTable()) {
-        //     if (
-        //       prayerTimeInSeconds - now < 3 * 60 &&
-        //       prayerTimeInSeconds - now >= -(20 * 60)
-        //     ) {
-        //       console.log(
-        //         '🚀 ~ setInterval ~ prayerTimeInSeconds - now:',
-        //         prayerTimeInSeconds - now
-        //       );
-        //       upcoming = true;
-        //       setPrayerUpComing({
-        //         show: upcoming,
-        //         remainingTime: prayerTimeInSeconds - now,
-        //       });
-
-        //       // // Determine whether to show upcoming or existing prayer info
-        //       // if (prayerTimeInSeconds - now <= 1 * 60) {
-        //       //   // If within 1 minute of prayer start, show existing prayer info
-        //       //   setShowPrayerAfter(false);
-        //       // } else if (prayerTimeInSeconds - now <= 20 * 60) {
-        //       //   // If within 20 minutes before prayer start, show upcoming prayer info
-        //       //   setShowPrayerAfter(true);
-        //       // }
-
-        //       break;
-        //     }
-        // }
-        // }
-        // // Check if we are within 1 minute *after* the prayer start time
-        // if (
-        //   now > prayerTimeInSeconds &&
-        //   now - prayerTimeInSeconds <= 1 * 60
-        // ) {
-        //   setShowPrayerAfter(false); // Show existing prayer info
-        //   upcoming = true; // Keep the prayerUpComing state active for timing
-        // }
 
         if (upcoming) {
           setViewModeSinglePage();
@@ -335,18 +254,6 @@ function App() {
     }, 5 * 60 * 1000);
   })();
 
-  // setTodayTable(
-  //   data().currentTime.map((time) => {
-  //     let seconds = 0;
-
-  //     seconds += +time.timehour * 60 * 60;
-  //     seconds += +time.timeminute * 60;
-  //     seconds += time.timeampm.toUpperCase() === 'PM' ? 12 * 60 * 60 : 0;
-
-  //     return seconds;
-  //   })
-  // );
-
   function getTimeOnly() {
     const sod = new Date();
     sod.setHours(0);
@@ -359,19 +266,6 @@ function App() {
 
   return (
     <>
-      {/* <div style={{ position: 'absolute' }}>
-        <pre style={'color:black'}>
-          {JSON.stringify(
-            {
-              viewMode: viewMode(),
-              showPrayerAfter: showPrayerAfter(),
-              prayerUpComing: prayerUpComing(),
-            },
-            undefined,
-            5
-          )}
-        </pre>
-      </div> */}
       <div class='background'></div>
 
       {data() && (
