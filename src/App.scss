@@ -22,20 +22,14 @@ html {
   z-index: -1;
 
   background: linear-gradient(-45deg, #b9ccd7, #fff8e0);
-  // background-repeat: no-repeat;
-  // background-size: cover;
-  // background-position: center;
 }
 
 .box {
   display: flex;
   flex-direction: column;
-  /* background-color: #f034; testing */
   padding: 3rem 3.75rem 2rem 3.75rem;
 
   .box-heading {
-    // margin-top: -0.8rem;
-    // margin-left: -1.5rem;
     margin-bottom: 1.7rem;
     font-size: 1.7rem;
     font-family: Gilroy;
@@ -70,9 +64,6 @@ html {
     'musjid-info-wrap slide-info-wrap timetable'
     'musjid-info-wrap slide-info-wrap timetable'
     'musjid-info-wrap slide-info-wrap timetable';
-
-  /* grid-gap: 1rem; */
-  /* margin: 1rem; */
 
   &.up-coming-prayer {
     grid-template-areas:
@@ -135,18 +126,10 @@ html {
 
 .wrap {
   display: grid;
-  // flex-direction: column;
-  // padding: 1.2rem;
-  // padding-bottom: 0rem;
 
   .box {
     overflow: hidden;
     background-image: linear-gradient(-45deg, #133951, #1a4d6e);
-    // margin: 1.2rem 1.2rem 1.2px 1.2rem;
-    // margin-bottom: 0rem;
-
-    // width: 100%;
-    // height: 100%;
 
     border-radius: 1rem;
     box-shadow: 0rem 0rem 2rem 0rem rgb(128, 128, 128);
@@ -157,10 +140,6 @@ html {
       color: #341e00;
     }
   }
-
-  // &:nth-last-child(0) {
-  // padding-bottom: 1.2rem;
-  // }
 }
 
 .time-wrap {
@@ -175,8 +154,6 @@ html {
     overflow: unset;
 
     text-align: center;
-    // justify-content: center;
-    // justify-items: center;
 
     min-width: 40rem;
 
@@ -195,7 +172,6 @@ html {
 
       .time-dots {
         margin: 0 0.05em;
-        // color: #777777;
       }
     }
 
@@ -223,6 +199,11 @@ html {
 .timetable-wrap {
   grid-area: timetable;
 
+  .table-heading.table-row {
+    font-weight: 600;
+    color: #fffa;
+  }
+
   .table-row {
     display: flex;
     justify-content: space-between;
@@ -243,19 +224,14 @@ html {
       min-width: 5rem;
     }
 
-    // .name,
     .heading {
-      /* background-color: red; */
       color: #fffa;
-      // font-weight: 500;
-      /* align-content: center; */
     }
 
     .name {
       min-width: 10rem;
 
       padding-top: 0.3rem;
-      // line-height: 3.5rem;
     }
 
     .begins {
@@ -335,12 +311,10 @@ html {
 .musjid-info-wrap {
   grid-area: musjid-info-wrap;
 
-  // height: min-content;
-
   .box {
     background-image: linear-gradient(-45deg, #bd9865, #d9b581) !important;
     box-shadow: 0rem 0rem 2rem 0rem #b3b3b3bc;
-    border: solid 1px rgb(135, 120, 69);
+    border: solid 1px rgb(174, 156, 95);
 
     .box-content {
       height: 100%;
@@ -352,8 +326,6 @@ html {
       .qr-code {
         display: flex;
         height: 100%;
-        // background-color: red;
-
         img {
           width: 100%;
         }
@@ -365,12 +337,10 @@ html {
 .slide-info-wrap {
   grid-area: slide-info-wrap;
 
-  // height: min-content;
-
   .box {
     background-image: linear-gradient(-45deg, #bd9865, #d9b581) !important;
     box-shadow: 0rem 0rem 2rem 0rem #b3b3b3bc;
-    border: solid 1px rgb(135, 120, 69);
+    border: solid 1px rgb(174, 156, 95);
 
     .box-heading {
       display: flex;

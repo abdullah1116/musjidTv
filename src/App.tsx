@@ -485,14 +485,19 @@ function App() {
 
           <div class='timetable-wrap wrap'>
             <div class='box'>
-              <span class='box-heading'>Prayer Timetable</span>
+              <span class='box-heading'>Prayer Times</span>
+              <div class='table-heading table-row'>
+                <div></div>
+                <div>Begins</div>
+                <div>Jama'ah</div>
+              </div>
               {data()?.currentTime?.map((time) => (
                 <div class='table-row'>
                   <div class='name'>{time.prayername}</div>
                   <div class='begins'>
                     {
                       ((data()!.startTime as any)[
-                        String.fromCharCode(97 + time.timeid)
+                        String.fromCharCode(96 + time.timeid)
                       ] || {}) as any
                     }
                   </div>
