@@ -86,9 +86,8 @@ function App() {
           const prayerTimeInSeconds = todayTable()[prayerId];
 
           if (
-            // prayerTimeInSeconds - now < 15 * 60 &&
-            prayerTimeInSeconds - now >=
-            -(5 * 60)
+            prayerTimeInSeconds - now < 15 * 60 &&
+            prayerTimeInSeconds - now >= -(5 * 60)
           ) {
             upcoming = true;
             const remainingTime = prayerTimeInSeconds - now + 1;
