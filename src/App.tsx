@@ -1,7 +1,7 @@
 import moment from 'moment';
 // @ts-ignore
 import iMoment from 'moment-hijri';
-import { createSignal } from 'solid-js';
+import { Accessor, createSignal } from 'solid-js';
 import './App.scss';
 
 function App() {
@@ -86,8 +86,9 @@ function App() {
           const prayerTimeInSeconds = todayTable()[prayerId];
 
           if (
-            prayerTimeInSeconds - now < 15 * 60 &&
-            prayerTimeInSeconds - now >= -(5 * 60)
+            // prayerTimeInSeconds - now < 15 * 60 &&
+            prayerTimeInSeconds - now >=
+            -(5 * 60)
           ) {
             upcoming = true;
             const remainingTime = prayerTimeInSeconds - now + 1;
@@ -120,7 +121,7 @@ function App() {
     setTimeUpdaterInterval((v) => {
       if (v) return v;
 
-      setInterval(() => {
+      function set() {
         const now = moment();
         setTime({
           hour: now.format('h'),
@@ -139,7 +140,10 @@ function App() {
           date: m.iDate(),
           year: m.iYear(),
         });
-      }, 1000);
+      }
+
+      setInterval(() => set(), 1000);
+      set();
     });
   }
 
@@ -214,6 +218,8 @@ function App() {
           .then((res: ReturnType<typeof data>) => {
             if (!res) return;
 
+            res.announcements = [...res.announcements, ...res.announcements];
+
             setData(res);
 
             setTodayTable(
@@ -286,12 +292,7 @@ function App() {
           <div class='time-wrap wrap'>
             <div class='box'>
               <h1 class='time'>
-                {time().hour}
-                <span class='time-dots'>:</span>
-                {time().minute}
-                <span class='time-dots'>:</span>
-                <span class='time-sec'>{time().second}</span>
-                {' ' + time().meridiem}
+                <XTime time={time} />
               </h1>
               <h2 class='date'>{date()}</h2>
               {islamicDate() && (
@@ -329,7 +330,7 @@ function App() {
                     {announcements().map((_, i) => (
                       <>
                         <button class='btn' onclick={() => setSlideNumber(i)}>
-                          {i === slideNumber() ? 'O' : '-'}
+                          {i === slideNumber() ? <>&#11044;</> : <>&#9711;</>}
                         </button>
                       </>
                     ))}
@@ -353,17 +354,22 @@ function App() {
                   {prayerUpComing().show &&
                     (() => {
                       const remainingSeconds = prayerUpComing().remainingTime;
-                      const hours = Math.floor(remainingSeconds / 3600);
                       const minutes = Math.floor(
                         (remainingSeconds % 3600) / 60
                       );
-                      const seconds = Math.floor(remainingSeconds % 60);
+                      const seconds = Math.floor(remainingSeconds % 60)
+                        .toString()
+                        .padStart(2, '0');
 
-                      return `${
-                        hours > 0 ? String(hours).padStart(2, '0') + ':' : ''
-                      }${String(minutes).padStart(2, '0')}:${String(
-                        seconds
-                      ).padStart(2, '0')}s`;
+                      return (
+                        <>
+                          <span class='time'>
+                            {minutes}
+                            <span class='time-dots'>:</span>
+                            <span class='time-sec'>{seconds}</span>
+                          </span>
+                        </>
+                      );
                     })()}
                 </span>
               </div>
@@ -406,6 +412,29 @@ function App() {
           </div>
         </div>
       )}
+    </>
+  );
+}
+function XTime({
+  time,
+}: {
+  time: Accessor<{
+    hour: string;
+    minute: string;
+    second: string;
+    meridiem: string;
+  }>;
+}) {
+  return (
+    <>
+      <span class='time'>
+        {time().hour}
+        <span class='time-dots'>:</span>
+        {time().minute}
+        <span class='time-dots'>:</span>
+        <span class='time-sec'>{time().second}</span>
+        {' ' + time().meridiem}
+      </span>
     </>
   );
 }
