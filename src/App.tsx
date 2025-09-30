@@ -217,8 +217,6 @@ function App() {
           .then((res: ReturnType<typeof data>) => {
             if (!res) return;
 
-            res.announcements = [...res.announcements, ...res.announcements];
-
             setData(res);
 
             setTodayTable(
